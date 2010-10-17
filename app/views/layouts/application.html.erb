@@ -8,10 +8,23 @@
   <%= stylesheet_link_tag 'application' %>
 </head>
 <body>
-
-<p style="color: green"><%= flash[:notice] %></p>
+<div id="content">
+	<div id="login_logout">
+		<% if logged_in? %>
+			Logged in as:
+			<%=h @current_user.login %>
+			<%= link_to "(Logout)", session_path, :method => :delete %>
+		<% else %>
+			<%= link_to "Login", new_session_path %>
+		<% end %>
+	</div>
+	<h1>To-Do List</h1>
+	<% unless flash[:notice].blank? %>
+		<div id="notification"><%= flash[:notice] %></div>
+	<% end %>
 
 <%= yield %>
 
+</div>
 </body>
 </html>
