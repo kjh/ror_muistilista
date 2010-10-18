@@ -21,6 +21,8 @@ class ApplicationController < ActionController::Base
   	def fetch_logged_in_user
   		return unless session[:user_id]
   		@current_user = User.find_by_id(session[:user_id])
+  		# One way to do this (other: create virtual attribute and set it in the controller)
+  		User.current_user = @current_user
   	end
   
   	def logged_in?

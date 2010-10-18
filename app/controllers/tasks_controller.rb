@@ -8,8 +8,15 @@ class TasksController < ApplicationController
 	
   	# GET /tasks
   	def index
-  		# Current user's tasks
-  		@tasks = @current_user.tasks.find(:all)
+  		# Fetch tasks
+    	if params[:taggings]
+    		@tasks = Task.tagged_with(params[:taggings])
+    		#@selected_tag_id
+		else
+			# Current user's tasks
+  			@tasks = @current_user.tasks.find(:all, :order => :position)
+			#@selected_tag_id
+		end
   	  
   	  	respond_to do |format|
   	  	  	format.html # index.html.erb
