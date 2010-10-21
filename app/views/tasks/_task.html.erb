@@ -1,0 +1,15 @@
+<li id="<%="item_#{task.id}"%>">
+	<% form_for(task) do |f| %>
+		<%= f.check_box :status %>
+	<% end %>
+	<span class="handle">
+		<%=h task.name %>
+	</span>
+	<%= link_to 'Edit', edit_task_path(task) %>
+	<%= link_to 'Delete', task, :method => :delete %><br \>
+	<p class="tags">Tags:
+		<% task.tags.each do |t| %>
+			<%= link_to "#{t.name}", :controller => "tasks", :taggings => "#{t.id}" %>
+		<% end %>
+	</p>
+</li>

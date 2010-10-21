@@ -1,0 +1,12 @@
+<% unless @sortable %>
+	<% if @task.status %>
+		$("#complete_items").append("<%= escape_javascript(render(:partial => @task)) %>");
+		$('#complete_items p.tags').hide();
+	<% else %>
+		$("#incomplete_items").append("<%= escape_javascript(render(:partial => @task)) %>");
+		$('#complete_items p.tags').hide();
+	<% end %>
+<% else %>
+	$("ul#incomplete_items").removeClass("animation");
+	$("#incomplete_items").sortable("enable");
+<% end %>	
