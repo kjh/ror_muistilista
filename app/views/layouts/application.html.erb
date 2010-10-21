@@ -6,6 +6,7 @@
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>To-Do List:<%= controller.action_name %></title>
   <%= stylesheet_link_tag 'application' %>
+  <%= javascript_include_tag 'jquery', 'jquery-ui', 'application' %>
 </head>
 <body>
 <div id="content">
@@ -19,10 +20,6 @@
 		<% end %>
 	</div>
 	<h1>To-Do List</h1>
-	<% unless flash[:notice].blank? %>
-		<div id="notification"><%= flash[:notice] %></div>
-	<% end %>
-
 <%= yield %>
 
 </div>

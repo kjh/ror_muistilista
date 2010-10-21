@@ -16,3 +16,13 @@ body {
 	margin:10px 0;
 	padding:5px;
 }
+
+form {
+	display:inline;
+}
+
+ul {list-style:none;}
+
+.animation { list-style-image: url('/images/ajax-loader.gif'); }
+
+#incomplete_items .handle{ cursor:move; }

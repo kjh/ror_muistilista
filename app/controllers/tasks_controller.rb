@@ -8,16 +8,14 @@ class TasksController < ApplicationController
 	
   	# GET /tasks
   	def index
-  		# Fetch tasks
-    	if params[:taggings]
+  		if params[:taggings]
     		@tasks = Task.tagged_with(params[:taggings])
-    		#@selected_tag_id
+    		@find_by_tagging = @current_user.tags.find(params[:taggings])
 		else
-			# Current user's tasks
-  			@tasks = @current_user.tasks.find(:all, :order => :position)
-			#@selected_tag_id
+			@tasks = @current_user.tasks.find(:all, :order => :position)
+			@find_by_tagging = nil
 		end
-  	  
+		  	  
   	  	respond_to do |format|
   	  	  	format.html # index.html.erb
   	  	end
@@ -51,8 +49,14 @@ class TasksController < ApplicationController
 
   	# POST /tasks
   	def create
-  		# Current user's task 
-  		@task = @current_user.tasks.build params[:task]
+  		# Build new task object with params
+   		@task = @current_user.tasks.build params[:task]
+   		# Calculate default values before save
+   		# Before save
+   		@task.status = false 
+   		# If count = 0 position = 0 etc. 
+  		@task.position = @current_user.tasks.count(:conditions => { :status => false }) 
+  		# Save 		
   		respond_to do |format|
   			if @task.save
   	      		flash[:notice] = 'Task was successfully created.'
@@ -65,13 +69,49 @@ class TasksController < ApplicationController
 
   	# PUT /tasks/1
   	def update
-  		# Current user's task
+  		# Task before update
   		@task = @current_user.tasks.find(params[:id])
   		
-  	  	respond_to do |format|
+  		@before_update = nil
+  		@sortable = false
+  		
+  		# Ajax update (state change OR reorder)
+  		if request.format.js?
+  			# update task positions
+    		if params[:list]
+    			# Ajax reorder
+    			@sortable = true
+    			@sort = params[:list][:order]
+    			@sort.each do |s|
+    				item = s.split('_')
+    				t = Task.find(item[1])
+    				t.update_attributes(:position => item[0])
+				end
+			else 
+				# Ajax state change 			
+  				# Task object state before update
+  				@before_update = Task.new do |t|
+  					t.name = @task.name
+  					t.position = @task.position
+  					t.status = @task.status
+  				end
+  		
+  				# Set position -> append to opposite list
+  				if @task.status # inverse of params[:status]
+  					@task.position = @current_user.tasks.count(:conditions => { :status => false }) 
+  				else
+  					@task.position = @current_user.tasks.count(:conditions => { :status => true }) 
+  				end
+  			end
+  		end # end Ajax update
+  		  		
+  		
+  		respond_to do |format|
   	  	  	if @task.update_attributes(params[:task])
-  	  	  	  	flash[:notice] = 'Task was successfully updated.'
+  	  	  		flash[:notice] = 'Task was successfully updated.'
   	  	  	  	format.html { redirect_to tasks_path }
+  	  	  	  	# Ajax update IS state change OR reorder
+  	  	  	  	format.js { Task.reorder_after(@before_update, "delete") unless @sortable }
   	  	  	else
   	  	  	  	format.html { render :action => "edit" }
   	  	  	end
@@ -83,6 +123,8 @@ class TasksController < ApplicationController
   		# Current user's task
   		@task = @current_user.tasks.find(params[:id])
   	    @task.destroy
+  	    # Reorder after delete
+  	    Task.reorder_after(@task, "delete")
 
   	  	respond_to do |format|
   	  	  	format.html { redirect_to(tasks_url) }
