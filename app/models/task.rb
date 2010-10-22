@@ -12,7 +12,7 @@ class Task < ActiveRecord::Base
 	
 	# Finds related tasks by tag_id
 	def self.tagged_with(tag_id)
-		Tag.find(tag_id).tasks.find(:all, :order => :position)
+		Tag.find(tag_id).tasks.find(:all, :order => :position).uniq
 	end
 	
 	# Getter for tag_names

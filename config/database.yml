@@ -21,7 +21,7 @@ development:
   database: ror_muistilista_development
   pool: 5
   username: root
-  password: 12345
+  password: 123
   host: localhost
 
 # Warning: The database defined as "test" will be erased and
@@ -34,7 +34,7 @@ test:
   database: ror_muistilista_test
   pool: 5
   username: root
-  password: 12345
+  password: 123
   host: localhost
 
 production:
@@ -44,5 +44,5 @@ production:
   database: ror_muistilista_production
   pool: 5
   username: root
-  password: 12345
+  password: 123
   host: localhost

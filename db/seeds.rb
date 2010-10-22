@@ -7,6 +7,6 @@
 #   Major.create(:name => 'Daley', :city => cities.first)
 
 u = User.new
-u.login = "kalle"
-u.password = "123"
+u.login = "palautus"
+u.password = "tkp123"
 u.save
